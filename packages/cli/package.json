@@ -1,11 +1,11 @@
 {
   "name": "onflyt-cli",
-  "version": "0.1.0-beta",
+  "version": "0.1.0",
   "type": "module",
   "description": "Onflyt CLI - Deploy Node.js and Python APIs to serverless pods. Pay only per use.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/miiglu/onflyt-cli"
+    "url": "git+https://github.com/miiglu/onflyt-cli.git"
   },
   "main": "dist/index.js",
   "bin": {
