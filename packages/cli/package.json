@@ -1,6 +1,6 @@
 {
   "name": "onflyt-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Onflyt CLI - Deploy Node.js and Python APIs to serverless pods. Pay only per use.",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "main": "dist/index.js",
   "bin": {
-    "onflyt": "dist/index.js"
+    "onflyt": "./bin/cli.js"
   },
   "scripts": {
     "dev": "tsx src/index.tsx",
