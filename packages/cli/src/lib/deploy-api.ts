@@ -253,12 +253,18 @@ export async function startDeployment(
   instanceSize?: ContainerTier,
   replicas?: number,
   envVars?: Array<{ key: string; value: string }>,
+  buildCommand?: string,
+  installCommand?: string,
+  outputDirectory?: string,
 ): Promise<string> {
   const deployRes = await api.post<any>(`/deployments/${projectId}/deploy`, {
     branch: branch || "main",
     instanceSize,
     replicas,
     envVars,
+    buildCommand,
+    installCommand,
+    outputDirectory,
   });
 
   return deployRes.deploymentId;

@@ -283,6 +283,9 @@ const Deploy: React.FC<Props> = ({ teamFlag }) => {
             needsPod ? selectedInstance?.id : undefined,
             needsPod ? replicas : undefined,
             envVars.length > 0 ? envVars : undefined,
+            projectConfig?.buildCommand,
+            projectConfig?.installCommand,
+            projectConfig?.outputDirectory,
           );
 
           setDeploymentId(depId);
