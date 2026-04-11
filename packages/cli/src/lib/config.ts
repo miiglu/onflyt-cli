@@ -6,7 +6,7 @@ const CONFIG_DIR = join(homedir(), ".onflyt");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
 const PROJECT_CONFIG_FILE = "onflyt.json";
 
-export const API_URL = process.env.ONFLYT_API_URL || "";
+export const API_URL = process.env.ONFLYT_API_URL || "__ONFLYT_API_URL__";
 
 export interface Config {
   token?: string;
