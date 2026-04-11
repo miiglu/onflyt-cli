@@ -24,7 +24,7 @@ export const Logo: React.FC = () => (
       <Text> </Text>
       <Text bold color="black" backgroundColor="rgb(255,191,0)">
         {" "}
-        v0.1.0-beta{" "}
+        v0.1.3-beta{" "}
       </Text>
     </Box>
   </Box>
