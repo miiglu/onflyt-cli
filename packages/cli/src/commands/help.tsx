@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 const Help: React.FC = () => {
   useEffect(() => {
     console.log(`
-\x1b[38;2;255;191;0m ⬡ ＯＮＦＬＹＴ \x1b[0m\x1b[1m Deploy CLI v0.1.0-beta\x1b[0m
+\x1b[38;2;255;191;0m ⬡ ＯＮＦＬＹＴ \x1b[0m\x1b[1m Deploy CLI v0.1.11-beta\x1b[0m
 
   \x1b[1mUSAGE\x1b[0m
     $ onflyt <command> [options]
