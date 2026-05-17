@@ -17,7 +17,7 @@ import Rollback from "./commands/rollback.js";
 
 const cli = meow(
   `
-  Onflyt CLI v0.1.4-beta
+  Onflyt CLI 0.1.11-beta
 
   Usage
     $ onflyt <command>

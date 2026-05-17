@@ -60,6 +60,7 @@ export interface ProjectConfig {
   gitRepoUrl?: string;
   gitBranch?: string;
   gitRepoId?: number;
+  rootDirectory?: string;
 }
 
 export function getProjectConfig(

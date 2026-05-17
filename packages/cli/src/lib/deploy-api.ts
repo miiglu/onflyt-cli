@@ -12,7 +12,6 @@ import {
 import { join, relative, basename } from "path";
 import { execSync } from "child_process";
 import {
-  CONTAINER_TIER_SPECS,
   TIER_HOURLY_PRICE,
   ContainerTier,
 } from "../shared";
@@ -43,6 +42,7 @@ export interface ProjectConfig {
   startCommand?: string;
   gitRepoUrl?: string;
   gitBranch?: string;
+  rootDirectory?: string;
 }
 
 export interface InstanceOption {
@@ -219,7 +219,7 @@ export async function findOrCreateProject(
     name: projectName,
     framework: framework || "static",
     teamId,
-    gitRepoUrl: gitUrl || null,
+    gitRepository: gitUrl ? { repoUrl: gitUrl, branch: 'main' } : undefined,
     instanceSize,
     maxInstances,
   });
@@ -256,6 +256,7 @@ export async function startDeployment(
   buildCommand?: string,
   installCommand?: string,
   outputDirectory?: string,
+  rootDirectory?: string,
 ): Promise<string> {
   const deployRes = await api.post<any>(`/deployments/${projectId}/deploy`, {
     branch: branch || "main",
@@ -265,6 +266,7 @@ export async function startDeployment(
     buildCommand,
     installCommand,
     outputDirectory,
+    rootDirectory,
   });
 
   return deployRes.deploymentId;
@@ -275,6 +277,7 @@ export type DeploymentStatus =
   | "building"
   | "provisioning"
   | "deployed"
+  | "live"
   | "failed";
 
 export interface DeploymentDetails {

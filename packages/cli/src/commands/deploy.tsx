@@ -286,6 +286,7 @@ const Deploy: React.FC<Props> = ({ teamFlag }) => {
             projectConfig?.buildCommand,
             projectConfig?.installCommand,
             projectConfig?.outputDirectory,
+            projectConfig?.rootDirectory,
           );
 
           setDeploymentId(depId);
@@ -399,7 +400,7 @@ const Deploy: React.FC<Props> = ({ teamFlag }) => {
             }
           }
 
-          if (details.status === "live") {
+          if (details.status === "deployed") {
             setLiveUrl(
               details.url || `https://${projectConfig?.name}.onflyt.dev`,
             );
@@ -818,6 +819,7 @@ const Deploy: React.FC<Props> = ({ teamFlag }) => {
       building: "cyan",
       provisioning: "magenta",
       deployed: "green",
+      live: "green",
       failed: "red",
     };
     const statusLabels: Record<DeploymentStatus, string> = {
@@ -825,6 +827,7 @@ const Deploy: React.FC<Props> = ({ teamFlag }) => {
       building: "BUILDING",
       provisioning: "PROVISIONING",
       deployed: "DEPLOYED",
+      live: "LIVE",
       failed: "FAILED",
     };
     const statusIcons: Record<DeploymentStatus, string> = {
@@ -832,6 +835,7 @@ const Deploy: React.FC<Props> = ({ teamFlag }) => {
       building: "🔨",
       provisioning: "⚙️",
       deployed: "✅",
+      live: "✅",
       failed: "❌",
     };
 

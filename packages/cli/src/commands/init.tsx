@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Box, useInput } from "ink";
 import { existsSync, writeFileSync } from "fs";
-import { join } from "path";
+import { join, relative } from "path";
 import { GitDetector } from "../lib/git.js";
 import { FrameworkDetector } from "../lib/framework.js";
 import {
@@ -14,6 +14,7 @@ import {
   FRAMEWORKS,
   TEMPLATES,
   getDefaultBuildCommand,
+  getBuildCommand,
   getDefaultOutputDirectory,
   getDefaultStartCommand,
   getInstallCommand,
@@ -36,6 +37,8 @@ type Step =
   | "framework"
   | "packageManager"
   | "git"
+  | "rootDirectory"
+  | "gitBranch"
   | "gitRemote"
   | "saving"
   | "done"
@@ -79,6 +82,8 @@ const Init: React.FC<InitProps> = ({
   const [detectedFrameworkId, setDetectedFrameworkId] = React.useState("");
   const [gitUrl, setGitUrl] = React.useState<string | null>(null);
   const [gitBranch, setGitBranch] = React.useState("main");
+  const [gitRoot, setGitRoot] = React.useState("");
+  const [rootDirValue, setRootDirValue] = React.useState("");
   const [remoteUrl, setRemoteUrl] = React.useState("");
   const [errorMsg, setErrorMsg] = React.useState("");
   const [savedConfig, setSavedConfig] = React.useState<ProjectConfig | null>(
@@ -163,6 +168,11 @@ const Init: React.FC<InitProps> = ({
       setGitBranch(gitInfo.currentBranch || "main");
     }
 
+    if (gitInfo.rootDir && gitInfo.rootDir !== cwd) {
+      setGitRoot(gitInfo.rootDir);
+      setRootDirValue(relative(gitInfo.rootDir, cwd));
+    }
+
     if (yes) {
       autoSave();
     }
@@ -193,7 +203,7 @@ const Init: React.FC<InitProps> = ({
     const frameworkDetector = new FrameworkDetector(cwd);
     const detectedOutputDir = frameworkDetector.detectOutputDirectory(fwId);
 
-    const buildCmd = getDefaultBuildCommand(fwId) || "";
+    const buildCmd = getBuildCommand(fwId, pmId);
     const installCmd = getInstallCommand(fwId, pmId);
     const outputDir =
       detectedOutputDir || getDefaultOutputDirectory(fwId) || ".";
@@ -212,7 +222,8 @@ const Init: React.FC<InitProps> = ({
       installCommand: installCmd,
       startCommand: startCmd,
       gitRepoUrl: connectGit ? remoteUrl || gitUrl || undefined : undefined,
-      gitBranch: connectGit ? "main" : undefined,
+      gitBranch: connectGit ? gitBranch : undefined,
+      rootDirectory: connectGit && rootDirValue ? rootDirValue : undefined,
     };
 
     saveProjectConfig(projectConfig);
@@ -327,16 +338,44 @@ build/
           setConnectGit((prev) => !prev);
         } else if (key.return) {
           if (connectGit) {
-            if (hasGit) {
-              autoSave();
+            if (rootDirValue) {
+              goTo("rootDirectory");
             } else {
-              goTo("gitRemote");
+              goTo("gitBranch");
             }
           } else {
             autoSave();
           }
         } else if (key.escape) {
           goBack();
+        }
+        break;
+
+      case "rootDirectory":
+        if (key.return) {
+          goTo("gitBranch");
+        } else if (key.escape) {
+          goBack();
+        } else if (key.backspace || key.delete) {
+          setRootDirValue(rootDirValue.slice(0, -1));
+        } else if (input && input.match(/^[a-zA-Z0-9-_/.@]$/)) {
+          setRootDirValue(rootDirValue + input);
+        }
+        break;
+
+      case "gitBranch":
+        if (key.return) {
+          if (connectGit && !hasGit) {
+            goTo("gitRemote");
+          } else {
+            autoSave();
+          }
+        } else if (key.escape) {
+          goBack();
+        } else if (key.backspace || key.delete) {
+          setGitBranch(gitBranch.slice(0, -1));
+        } else if (input && input.match(/^[a-zA-Z0-9-_/.@]$/)) {
+          setGitBranch(gitBranch + input);
         }
         break;
 
@@ -576,6 +615,60 @@ build/
           <Box marginTop={1}>
             <Text dimColor>
               Enter paste URL • Backspace delete • Enter continue
+            </Text>
+          </Box>
+        </>
+      )}
+
+      {step === "rootDirectory" && (
+        <>
+          <Box marginTop={1}>
+            <Text>Root Directory</Text>
+          </Box>
+          <Box marginTop={1}>
+            <Text dimColor>
+              Subdirectory within git repo where this project lives
+            </Text>
+          </Box>
+          <Box marginTop={1}>
+            <Text bold color="cyan">
+              &gt;{" "}
+            </Text>
+            <Text>{rootDirValue || "(repo root)"}</Text>
+            <Text bold color="cyan">
+              _
+            </Text>
+          </Box>
+          <Box marginTop={1}>
+            <Text dimColor>
+              Edit path • Backspace delete • Enter continue
+            </Text>
+          </Box>
+        </>
+      )}
+
+      {step === "gitBranch" && (
+        <>
+          <Box marginTop={1}>
+            <Text>Git Branch</Text>
+          </Box>
+          <Box marginTop={1}>
+            <Text dimColor>
+              Branch to deploy from
+            </Text>
+          </Box>
+          <Box marginTop={1}>
+            <Text bold color="cyan">
+              &gt;{" "}
+            </Text>
+            <Text>{gitBranch || "main"}</Text>
+            <Text bold color="cyan">
+              _
+            </Text>
+          </Box>
+          <Box marginTop={1}>
+            <Text dimColor>
+              Edit branch • Backspace delete • Enter continue
             </Text>
           </Box>
         </>

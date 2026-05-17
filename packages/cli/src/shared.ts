@@ -1,4 +1,5 @@
 export type PodTier = "micro" | "lite" | "standard" | "pro" | "business";
+export type ContainerTier = PodTier;
 
 export const TIER_HOURLY_PRICE: Record<PodTier, number> = {
   micro: 0,
@@ -13,6 +14,8 @@ export type SpendTier = "free" | "low" | "medium" | "high";
 export interface TeamLimits {
   maxProjects: number;
   maxInstancesPerProject: number;
+  maxBuildMinutes: number;
+  enableLogStreaming: boolean;
   tier: SpendTier;
   tierLabel: string;
 }
@@ -28,24 +31,32 @@ export const TIER_LIMITS: Record<SpendTier, TeamLimits> = {
   free: {
     maxProjects: 3,
     maxInstancesPerProject: 1,
+    maxBuildMinutes: 15,
+    enableLogStreaming: false,
     tier: "free",
     tierLabel: "Free Usage",
   },
   low: {
     maxProjects: 10,
     maxInstancesPerProject: 2,
+    maxBuildMinutes: 30,
+    enableLogStreaming: true,
     tier: "low",
     tierLabel: "Low Spend",
   },
   medium: {
     maxProjects: Infinity,
     maxInstancesPerProject: 4,
+    maxBuildMinutes: 60,
+    enableLogStreaming: true,
     tier: "medium",
     tierLabel: "Medium Spend",
   },
   high: {
     maxProjects: Infinity,
     maxInstancesPerProject: 10,
+    maxBuildMinutes: 120,
+    enableLogStreaming: true,
     tier: "high",
     tierLabel: "High Spend",
   },
@@ -297,6 +308,16 @@ export function getInstallCommand(
     pnpm: "pnpm install",
   };
   return installCommands[pm] || `${pm} install`;
+}
+
+export function getBuildCommand(
+  frameworkId: string,
+  packageManager: string,
+): string {
+  const pm = packageManager.toLowerCase();
+  const cmd = getDefaultBuildCommand(frameworkId) || "";
+  if (pm === "npm" || pm === "pip" || pm === "poetry") return cmd;
+  return cmd.replace(/^npm /, `${pm} `);
 }
 
 export interface Template {
