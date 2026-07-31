@@ -38,7 +38,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@octokit/oauth-methods": "^6.0.2",
-    "archiver": "^7.0.1",
+    "archiver": "^8.0.0",
     "figlet": "^1.11.0",
     "ink": "^6.8.0",
     "ink-select-input": "^6.2.0",
